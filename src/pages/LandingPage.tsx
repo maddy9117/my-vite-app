@@ -1,13 +1,15 @@
-export default function GetHihgest() {
-  
-  const numbers:number[] = [1, 2, 3, 4, 5];
-  const highestNumber = Math.max(...numbers);
-  return(
+import { useState } from "react";
+import Header from "../components/Header";
+import ProductGrid from "../components/ProductGrid";
 
-    <div>
-      <h1>Highest Number</h1>
-      <p>The highest number is: {highestNumber}</p>
-      <p>Numbers: {numbers.join(', ')}</p>
+export default function GetHihgest() {
+  const [query, setQuery] = useState("");
+
+  return (
+    <div className="p-4">
+      <Header query={query} setQuery={setQuery} />
+
+      <ProductGrid query={query} />
     </div>
   );
 }

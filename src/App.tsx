@@ -1,20 +1,8 @@
-import { useState } from 'react'
-import GetHihgest from './pages/LandingPage'
-import './App.css'
-import SearchBar from './components/ProductSearchBar'
+import "./App.css";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
-
-
-  return (
-    <>
-    
-    <SearchBar query={''} onChange={function (value: string): void {
-        throw new Error('Function not implemented.')
-      } } />
-      
-    </>
-  )
+  return <LandingPage />;
 }
 
-export default App
+export default App;

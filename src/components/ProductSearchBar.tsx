@@ -1,20 +1,20 @@
-import React, { FC } from 'react';
+import { useState } from "react";
+import ProductGrid from "./ProductGrid";
 
-interface SearchBarProps {
-  query: string;
-  onChange: (value: string) => void;
-}
+export default function ProductSearchBar({ query, setQuery }: { query: string, setQuery: (query: string) => void }) {
+  //const [query, setQuery] = useState("");
 
-const SearchBar: FC<SearchBarProps> = ({ query, onChange }) => {
   return (
-    <input
-      type="text"
-      value={query}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder="Search..."
-      className="w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-  );
-};
+    <div className="p-4">
+      <input
+        type="text"
+        placeholder="Search products..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className="border p-2 rounded mb-4 w-full"
+      />
 
-export default SearchBar;
+      
+    </div>
+  );
+}
