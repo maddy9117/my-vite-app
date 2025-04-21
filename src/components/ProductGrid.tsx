@@ -1,51 +1,47 @@
-import { useEffect, useState } from "react";
-import { Product } from "../types/Product";
+import { useEffect } from "react";
+//import { useSelector } from "react-redux";
+//import { RootState } from "../store";
+import { fetchProducts } from "../features/products/productsSlice";
+
+import { addToCart, decrementProduct } from "../features/cart/cartSlice";
+import { useAppSelector, useAppDispatch } from "../hooks/hooks";
 
 export default function ProductGrid({ query = "" }: { query: string }) {
-  const [products, setProducts] = useState<Product[]>([]);
-  
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+  const dispatch = useAppDispatch();
+  const { status, items } = useAppSelector((state) => state.products);
+  const cart = useAppSelector((state) => state.cart.items);
 
   useEffect(() => {
-    async function fetchData() {
-      const url = query
-        ? `http://localhost:8080/products/search?query=${query}`
-        : `http://localhost:8080/products`;
-      const response = await fetch(url);
-      const json = await response.json();
-      setProducts(json);
+    if (status === "idle") {
+      dispatch(fetchProducts(query));
     }
+  }, [dispatch, query, status]);
 
-    fetchData();
-  }, [query]);
+  const filteredProducts = query
+    ? items.filter(
+        (product) =>
+          product.name.toLowerCase().includes(query.toLowerCase()) ||
+          product.description.toLowerCase().includes(query.toLowerCase())
+      )
+    : items;
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(query.toLowerCase()) ||
-    product.description.toLowerCase().includes(query.toLowerCase())
-  );
+  const increment = (id: string) => dispatch(addToCart(id));
+  const decrement = (id: string) => dispatch(decrementProduct(id));
 
-
-  const [cart, setCart] = useState<{ [id: string]: number }>({});
-
-  const increment = (id: string) => {
-    setCart((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
-  };
-
-  const decrement = (id: string) => {
-    setCart((prev) => {
-      const newQty = (prev[id] || 0) - 1;
-      if (newQty <= 0) {
-        const { [id]: _, ...rest } = prev;
-        return rest;
-      }
-      return { ...prev, [id]: newQty };
-    });
-  };
+  if (status === "loading")
+    return <p className="text-center">Loading products...</p>;
+  if (status === "failed")
+    return <p className="text-center text-red-600">Error</p>;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
       {filteredProducts.length === 0 && (
-  <div className="col-span-full text-center text-gray-500">No products found.</div>
-)}
+        <div className="col-span-full text-center text-gray-500">
+          No products found.
+        </div>
+      )}
       {filteredProducts.map((product) => {
         const qty = cart[product.id] || 0;
 
@@ -55,13 +51,15 @@ export default function ProductGrid({ query = "" }: { query: string }) {
             className="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition"
           >
             <img
-              src={`http://localhost:8080${product.images[0]}`}
+              src={`${baseUrl}${product.images[0]}`}
               alt={product.name}
               className="w-full h-48 object-cover rounded-xl"
             />
             <h2 className="text-lg font-semibold mt-2">{product.name}</h2>
             <p className="text-green-600 font-medium mt-1">₹{product.price}</p>
-            <p className="text-sm text-gray-700 mt-1 line-clamp-2">{product.description}</p>
+            <p className="text-sm text-gray-700 mt-1 line-clamp-2">
+              {product.description}
+            </p>
 
             {qty === 0 ? (
               <button

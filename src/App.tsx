@@ -1,8 +1,15 @@
-import "./App.css";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
+import CartPage from "./pages/CartPage";
 import LandingPage from "./pages/LandingPage";
 
-function App() {
-  return <LandingPage />;
-}
+export default function App() {
+  return (
+    <BrowserRouter basename="/my-vite-app">
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
 
-export default App;
+        <Route path="/cart" element={<CartPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}

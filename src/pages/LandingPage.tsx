@@ -2,7 +2,7 @@ import { useState } from "react";
 import Header from "../components/Header";
 import ProductGrid from "../components/ProductGrid";
 
-export default function GetHihgest() {
+export default function LandingPage() {
   const [query, setQuery] = useState("");
 
   return (
