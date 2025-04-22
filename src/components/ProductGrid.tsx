@@ -5,8 +5,10 @@ import { fetchProducts } from "../features/products/productsSlice";
 
 import { addToCart, decrementProduct } from "../features/cart/cartSlice";
 import { useAppSelector, useAppDispatch } from "../hooks/hooks";
+import { useSearch } from "../context/SearchContext";
 
-export default function ProductGrid({ query = "" }: { query: string }) {
+export default function ProductGrid() {
+  const { query } = useSearch();
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const dispatch = useAppDispatch();
@@ -20,10 +22,8 @@ export default function ProductGrid({ query = "" }: { query: string }) {
   }, [dispatch, query, status]);
 
   const filteredProducts = query
-    ? items.filter(
-        (product) =>
-          product.name.toLowerCase().includes(query.toLowerCase()) ||
-          product.description.toLowerCase().includes(query.toLowerCase())
+    ? items.filter((product) =>
+        product.name.toLowerCase().includes(query.toLowerCase())
       )
     : items;
 
@@ -48,7 +48,10 @@ export default function ProductGrid({ query = "" }: { query: string }) {
         return (
           <div
             key={product.id}
-            className="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition"
+            //className="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition"
+            className={`bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition ${
+              product.stock === 0 ? "opacity-60" : ""
+            }`}
           >
             <img
               src={`${baseUrl}${product.images[0]}`}
@@ -57,11 +60,19 @@ export default function ProductGrid({ query = "" }: { query: string }) {
             />
             <h2 className="text-lg font-semibold mt-2">{product.name}</h2>
             <p className="text-green-600 font-medium mt-1">₹{product.price}</p>
+            <p className="text-green-600 font-medium mt-1">{product.stock}</p>
             <p className="text-sm text-gray-700 mt-1 line-clamp-2">
               {product.description}
             </p>
 
-            {qty === 0 ? (
+            {product.stock === 0 ? (
+              <button
+                disabled
+                className="mt-4 w-full bg-gray-300 text-gray-600 py-1 rounded-lg cursor-not-allowed"
+              >
+                Out of Stock
+              </button>
+            ) : qty === 0 ? (
               <button
                 onClick={() => increment(product.id.toString())}
                 className="mt-4 w-full bg-blue-600 text-white py-1 rounded-lg hover:bg-blue-700"
