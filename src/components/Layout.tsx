@@ -1,31 +1,35 @@
 // src/components/Layout.tsx
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAppSelector } from "../hooks/hooks";
-import { selectCartTotalQty } from "../features/cart/cartSlice";
-import { FaHouseUser, FaRegUserCircle, FaShoppingCart } from "react-icons/fa";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import { clearCart, selectCartTotalQty } from "../features/cart/cartSlice";
+import {
+  FaHouseUser,
+  FaRegUserCircle,
+  FaShoppingBag,
+  FaShoppingCart,
+} from "react-icons/fa";
 import SearchBar from "./SearchBar";
 import { logout } from "../features/auth/authSlice";
-import { useDispatch } from "react-redux";
+import axios from "axios";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const location = useLocation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const { token, user } = useAppSelector((state) => state.auth);
 
   const totalQty = useAppSelector(selectCartTotalQty);
 
-  const hideSearch = ["/cart", "/account"].includes(location.pathname);
+  const hideSearch = ["/account"].includes(location.pathname);
 
   const isActive = (path: string) =>
-    location.pathname === path
-      ? "text-blue-600 font-semibold"
-      : "text-gray-700";
+    location.pathname === path ? "text-blue-600 font-bold" : "text-gray-700";
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(clearCart());
     navigate("/");
   };
 
@@ -33,6 +37,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     <div className="min-h-screen flex flex-col bg-gray-50 text-gray-800">
       <header className="bg-white shadow-md">
         <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <FaShoppingBag />
           <Link to="/" className="text-2xl font-bold text-blue-600">
             🛍️ mStore
           </Link>
@@ -56,6 +61,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 </Link>
               )}
             </div>
+
             {token ? (
               <button
                 onClick={handleLogout}
@@ -71,19 +77,21 @@ export default function Layout({ children }: { children: ReactNode }) {
                 Sign In
               </Link>
             )}
-            <Link
-              to="/cart"
-              className={`relative flex items-center gap-1 ${isActive(
-                "/cart"
-              )}`}
-            >
-              <FaShoppingCart />
-              {totalQty > 0 && (
-                <span className="bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
-                  {totalQty}
-                </span>
-              )}
-            </Link>
+            {user && (
+              <Link
+                to="/cart"
+                className={`relative flex items-center gap-1 ${isActive(
+                  "/cart"
+                )}`}
+              >
+                <FaShoppingCart />
+                {totalQty > 0 && (
+                  <span className="bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
+                    {totalQty}
+                  </span>
+                )}
+              </Link>
+            )}
           </nav>
         </div>
       </header>

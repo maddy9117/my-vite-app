@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { loginUser } from "../features/auth/authSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { clearCart } from "../features/cart/cartSlice";
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -77,12 +78,9 @@ export default function LoginPage() {
 
         <p className="text-sm text-center mt-4 text-gray-500">
           Don’t have an account?{" "}
-          <a
-            href="/my-vite-app/register"
-            className="text-blue-600 hover:underline"
-          >
+          <Link to="/register" className="text-blue-600 hover:underline">
             Register
-          </a>
+          </Link>
         </p>
       </div>
     </div>

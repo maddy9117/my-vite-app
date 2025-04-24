@@ -6,57 +6,53 @@ import {
   clearCart,
 } from "../features/cart/cartSlice";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import axios from "axios";
-import Header from "../components/Header";
 import Layout from "../components/Layout";
+import { Link } from "react-router-dom";
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
-  images: string[];
-}
+import {
+  fetchCartProducts,
+  setCartProducts,
+} from "../features/products/productsSlice";
 
 export default function CartPage() {
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector((state) => state.cart.items);
-  console.log(cartItems);
-  const [products, setProducts] = useState<Product[]>([]);
+  const cartProducts = useAppSelector((state) => state.products.cartProducts);
+
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-  const cartArray = Object.entries(cartItems).map(([productId, quantity]) => ({
+  const cartArray: { productId: string; quantity: number }[] = Object.entries(
+    cartItems
+  ).map(([productId, quantity]) => ({
     productId,
-    quantity,
+    quantity: Number(quantity), // Ensure it's a number
   }));
 
-  //const ids = cartItems.map((item: { productId: string }) => item.productId).join(",");
   useEffect(() => {
     async function fetchProducts() {
-      const ids = Object.keys(cartItems); //cartItems.map((item) => item.productId).join(",");
+      const ids = Object.keys(cartItems);
       if (ids.length > 0) {
-        const response = await axios.get(`${baseUrl}/products/bulk?ids=${ids}`);
-        setProducts(response.data);
+        dispatch(fetchCartProducts(ids));
+        //const response = await axios.get(`${baseUrl}/products/bulk?ids=${ids}`);
+        //dispatch(setCartProducts(response.data));
       }
     }
     fetchProducts();
   }, [cartItems]);
 
-  const getProduct = (id: string) => products.find((p) => p.id === id);
-
+  const getProduct = (id: string) => cartProducts.find((p) => p.id === id);
   const totalPrice = cartArray.reduce((total, item) => {
     const product = getProduct(item.productId);
     return product ? total + product.price * item.quantity : total;
   }, 0);
 
-  //const [query, setQuery] = useState("");
-  //<Header query={query} setQuery={setQuery} />
   return (
     <>
       <Layout>
         <div className="p-6 max-w-4xl mx-auto">
-          {cartItems.length === 0 ? (
+          {Object.keys(cartItems).length === 0 ? (
             <p className="text-gray-600">Your cart is empty.</p>
           ) : (
             <>
@@ -124,13 +120,19 @@ export default function CartPage() {
                 );
               })}
 
-              <div className="mt-6 flex justify-between items-center">
-                <p className="text-lg font-bold">
+              <div className="mt-6 flex flex-wrap md:flex-nowrap justify-between items-stretch gap-4">
+                <p className="text-lg font-bold bg-white px-4 py-2 rounded h-full flex items-center">
                   Total: ₹{totalPrice.toFixed(2)}
                 </p>
+                <Link
+                  to="/checkout"
+                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 whitespace-nowrap h-full flex items-center justify-center"
+                >
+                  Proceed to Checkout
+                </Link>
                 <button
                   onClick={() => dispatch(clearCart())}
-                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 whitespace-nowrap h-full flex items-center justify-center"
                 >
                   Clear Cart
                 </button>

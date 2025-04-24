@@ -1,6 +1,7 @@
 // src/features/auth/authSlice.ts
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { clearCart } from "../cart/cartSlice";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -16,10 +17,13 @@ interface AuthState {
   loading: boolean;
   error: string | null;
 }
+const token = localStorage.getItem("token");
+const storedUser = localStorage.getItem("user");
 
 const initialState: AuthState = {
-  user: null,
-  token: localStorage.getItem("token"),
+  user:
+    storedUser && storedUser !== "undefined" ? JSON.parse(storedUser) : null,
+  token: token || null,
   loading: false,
   error: null,
 };
@@ -33,10 +37,12 @@ export const loginUser = createAsyncThunk(
         `${baseUrl}/api/auth/login`,
         credentials
       );
-      console.log(response.data);
+
       const { token, user } = response.data;
       localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      thunkAPI.dispatch(clearCart());
       return { token, user };
     } catch (error: any) {
       const errorMessage = error.response
@@ -55,13 +61,12 @@ export const fetchUserProfile = createAsyncThunk(
     try {
       const token = localStorage.getItem("token");
 
-      console.log("Token:", token);
       const res = await axios.get(`${baseUrl}/api/auth/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("Profile response:", res.data);
+
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue("Failed to fetch profile");
