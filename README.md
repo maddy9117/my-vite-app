@@ -1,6 +1,6 @@
 # My Vite App
 
-This repository contains an e-commerce application built using **React** and **Vite**. The application is implemented primarily in **TypeScript**, with additional usage of **CSS**, **JavaScript**, and **HTML**. It connects to a **Spring Boot REST API** for backend services and requires a **MongoDB** database running on localhost.
+This repository contains an e-commerce application built using **React** and **Vite**. The application is implemented primarily in **TypeScript**, with additional usage of **CSS**, **JavaScript**, and **HTML**. It connects to a **Spring Boot REST API** for backend services and requires a **MongoDB** database.
 
 ## Features
 
@@ -30,8 +30,8 @@ This repository contains an e-commerce application built using **React** and **V
 ### Prerequisites
 Ensure the following are installed and running on your machine:
 1. **Node.js** (for running the frontend).
-2. **MongoDB** (running on `localhost:27017`).
-3. **Spring Boot REST API** (running on `localhost:8080`).
+2. **MongoDB** ( database ).
+3. **Spring Boot REST API** ( backend ).
 
 ### Frontend Setup
 
@@ -51,15 +51,15 @@ Ensure the following are installed and running on your machine:
    npm run dev
    ```
 
-4. Open your browser and navigate to `http://localhost:3000` to view the application.
+4. Open your browser and navigate to `http://localhost:5173` to view the application.
 
 ### Backend Setup
 
-Ensure you have the **Spring Boot REST API** running and connected to the **MongoDB** database. Refer to the backend repository or documentation for instructions on setting up and running the API.
+Ensure you have the **Spring Boot REST API** running and connected to the **MongoDB** database. 
 
 ### MongoDB Configuration
 
-Make sure MongoDB is installed and running on `localhost:27017`. The backend application will use MongoDB to store data such as user information and product details.
+The backend application will use MongoDB to store data such as user information and product, cart and order details.
 
 ## Authentication
 
