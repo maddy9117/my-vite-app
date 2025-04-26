@@ -9,3 +9,5 @@ export interface Address {
   country: string;
   default?: boolean;
 }
+
+export type NewAddress = Omit<Address, "id" | "default">;

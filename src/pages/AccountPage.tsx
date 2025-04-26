@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { fetchUserProfile } from "../features/auth/authSlice";
 import Layout from "../components/Layout";
@@ -26,6 +26,15 @@ const Account = () => {
       return true;
     });
   }, [addresses]);
+
+  const [addressAdded, setAddressAdded] = useState(false);
+
+  useEffect(() => {
+    if (addressAdded) {
+      const timer = setTimeout(() => setAddressAdded(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [addressAdded]);
 
   useEffect(() => {
     dispatch(fetchUserProfile());
@@ -58,6 +67,12 @@ const Account = () => {
             </div>
           )}
         </div>
+        {/* Alert message */}
+        {addressAdded && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            Address added successfully!
+          </div>
+        )}
 
         {/* Address Section */}
         <div className="bg-white shadow-xl rounded-2xl p-6 w-full">
@@ -126,7 +141,7 @@ const Account = () => {
             </ul>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <AddressForm />
+            <AddressForm onSuccess={() => setAddressAdded(true)} />
           </div>
         </div>
 

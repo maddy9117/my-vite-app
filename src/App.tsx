@@ -21,7 +21,7 @@ export default function App() {
     }
   }, [token, dispatch]);
   return (
-    <BrowserRouter basename="/my-vite-app">
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />

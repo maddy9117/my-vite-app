@@ -12,6 +12,7 @@ import {
 import SearchBar from "./SearchBar";
 import { logout } from "../features/auth/authSlice";
 import axios from "axios";
+import { FaListCheck } from "react-icons/fa6";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const location = useLocation();
@@ -90,6 +91,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     {totalQty}
                   </span>
                 )}
+                <FaListCheck />
               </Link>
             )}
           </nav>

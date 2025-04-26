@@ -5,7 +5,7 @@ import { indianStates } from "../data/IndianStates";
 //import axios from "axios";
 //import { Address } from "../types/Address";
 
-const AddressForm = () => {
+const AddressForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [formData, setFormData] = useState({
     building: "",
     street: "",
@@ -35,6 +35,8 @@ const AddressForm = () => {
           state: "",
           country: "India",
         });
+
+        if (onSuccess) onSuccess();
       })
       .catch((err) => {
         console.error("Failed to add address:", err);

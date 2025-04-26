@@ -1,7 +1,7 @@
 // src/features/address/addressSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { Address } from "../../types/Address";
+import { Address, NewAddress } from "../../types/Address";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -24,7 +24,7 @@ export const fetchUserAddresses = createAsyncThunk(
 
 export const addAddress = createAsyncThunk(
   "address/addAddress",
-  async (newAddress: Address, thunkAPI) => {
+  async (newAddress: NewAddress, thunkAPI) => {
     const token = localStorage.getItem("token");
     try {
       const res = await axios.post(
